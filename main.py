@@ -1,37 +1,27 @@
-"""Absurd invention pitch: inspect the sentence, then convey it to the gate output."""
-import json
+"""Invention pitch: one sentence, filed with the office of ideas."""
 import os
-import pathlib
+import sys
 
-PITCH_FILE = "entry.txt"
-CEILING = 220
-
-
-def inspect_entry(blob: str) -> dict:
-    words = blob.split()
-    sentences = [seg for seg in blob.replace("!", ".").replace("?", ".").split(".") if seg.strip()]
-    dossier = {
-        "word_tally": len(words),
-        "sentence_tally": len(sentences),
-        "glyphs": len(" ".join(words)),
-        "raw_bytes": len(blob.encode("utf-8")),
-        "under_ceiling": len(" ".join(words)) <= CEILING,
-        "one_sentence": len(sentences) <= 1,
-    }
-    dossier["board_ready"] = dossier["under_ceiling"] and dossier["one_sentence"] and dossier["glyphs"] > 0
-    return dossier
+PITCH = ("The Fridge Dimmer: a sensor that fades the midnight fridge "
+         "glow down to bar-at-closing-time, so 2 AM snack runs feel "
+         "discreet instead of indicted.")
+FILE_NO = "inv2"
+OFFICE = "patents-adjacent"
+FEE = "waived"
 
 
-def convey() -> int:
-    home = pathlib.Path(__file__).resolve().parent
-    blob = (home / PITCH_FILE).read_text(encoding="utf-8")
-    dossier = inspect_entry(blob)
-    quay = pathlib.Path(os.environ.get("MAKEFUN_OUTPUT_DIR", home / "quay"))
-    quay.mkdir(parents=True, exist_ok=True)
-    (quay / PITCH_FILE).write_bytes(blob.encode("utf-8"))
-    print(json.dumps({"pitch": "fridge-dimmer", "dossier": dossier, "quay": str(quay)}))
-    return 0 if dossier["board_ready"] else 1
+def file_it(base):
+    base = base or "output"
+    os.makedirs(base, exist_ok=True)
+    p = os.path.join(base, "entry.txt")
+    data = PITCH + "\n"
+    with open(p, "w", encoding="utf-8", newline="\n") as f:
+        f.write(data)
+    if open(p, "rb").read() != data.encode("utf-8"):
+        sys.exit("filed under wrong universe")
+    return open(p, encoding="utf-8").read().strip()
 
 
-if __name__ == "__main__":
-    raise SystemExit(convey())
+got = file_it(os.environ.get("MAKEFUN_OUTPUT_DIR"))
+print(FILE_NO, OFFICE, len(got), "chars on file")
+print("fee:", FEE, "stamped at 2 AM")
