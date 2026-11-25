@@ -1,0 +1,2 @@
+The SockGPS: a tiny tracker clipped to every sock, so each one finally knows where its partner went and can file its own missing-person report.
+
