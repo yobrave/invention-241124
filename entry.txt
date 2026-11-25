@@ -1,1 +1,0 @@
-The Fridge Dimmer: a sensor that fades the midnight fridge glow down to bar-at-closing-time, so 2 AM snack runs feel discreet instead of indicted.
